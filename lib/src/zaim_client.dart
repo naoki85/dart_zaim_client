@@ -8,7 +8,7 @@ class ZaimClient {
 
   ZaimClient(ZaimConfig config, oauth1.Credentials credentials) {
     _clientCredentials =
-        new oauth1.ClientCredentials(config.consumerId, config.consumerSecret);
+        oauth1.ClientCredentials(config.consumerId, config.consumerSecret);
     _client = oauth1.Client(
         oauth1.SignatureMethods.hmacSha1, _clientCredentials, credentials);
   }

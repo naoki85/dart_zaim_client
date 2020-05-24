@@ -1,6 +1,7 @@
 # dart_zaim_client
 
-A client package that use [Zaim API](https://dev.zaim.net).
+A Project that was made to make using the [Zaim API](https://dev.zaim.net) from flutter and dart.  
+this package is depended on oauth1.
 
 ## Getting Started
 

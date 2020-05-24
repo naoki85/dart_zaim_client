@@ -1,7 +1,8 @@
 name: dart_zaim_client
-description: A client package that use Zaim API.
-version: 0.0.1
-author: naoki85
+description: |
+  A Project that was made to make using the Zaim API from flutter and dart.
+  this package is depended on oauth1.
+version: 0.0.2
 homepage: https://github.com/naoki85/dart_zaim_client
 
 environment:

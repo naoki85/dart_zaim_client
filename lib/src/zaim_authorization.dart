@@ -10,7 +10,7 @@ class ZaimAuthorization {
   oauth1.ClientCredentials _clientCredentials;
   oauth1.Credentials _tempCredentials;
 
-  final _platform = new oauth1.Platform(
+  final _platform = oauth1.Platform(
       ZAIM_API_URL_REQUEST_TOKEN,
       ZAIM_API_URL_AUTHORIZE,
       ZAIM_API_URL_ACCESS_TOKEN,
@@ -18,8 +18,8 @@ class ZaimAuthorization {
 
   ZaimAuthorization(ZaimConfig config) {
     _clientCredentials =
-        new oauth1.ClientCredentials(config.consumerId, config.consumerSecret);
-    _auth = new oauth1.Authorization(_clientCredentials, _platform);
+        oauth1.ClientCredentials(config.consumerId, config.consumerSecret);
+    _auth = oauth1.Authorization(_clientCredentials, _platform);
   }
 
   get clientCredentials => _clientCredentials;
