@@ -14,7 +14,7 @@ class ZaimGenre {
     this.name = genre['name'];
     this.active = genre['active'];
     this.sort = genre['sort'];
-    this.categoryId = genre['categoryId'];
+    this.categoryId = genre['category_id'];
     this.parentGenreId = genre['parent_genre_id'];
     this.modified = genre['modified'];
   }

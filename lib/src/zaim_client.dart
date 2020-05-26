@@ -13,19 +13,21 @@ class ZaimClient {
         oauth1.SignatureMethods.hmacSha1, _clientCredentials, credentials);
   }
 
-  Future<ZaimUser> userVerify() async {
+  Future<UserVerifyResponse> userVerify() async {
     final response = await _requestParse('/v2/home/user/verify');
-    return ZaimUser(response['me']);
+    final int requested = response['requested'];
+    return UserVerifyResponse(ZaimUser(response['me']), requested);
   }
 
-  Future<List<ZaimMoney>> getMoneyList() async {
+  Future<MoneyListResponse> getMoneyList() async {
     List<ZaimMoney> moneyList = [];
     final response = await _client.get('$ZAIM_API_BASE_URL/v2/home/money');
     var jsonArray = jsonDecode(response.body);
     for (var data in jsonArray['money']) {
       moneyList.add(ZaimMoney(data));
     }
-    return moneyList;
+    final int requested = jsonArray['requested'];
+    return MoneyListResponse(moneyList, requested);
   }
 
   Future<CreateMoneyResponse> createMoney(
@@ -44,10 +46,12 @@ class ZaimClient {
     } else {
       place = null;
     }
-    return CreateMoneyResponse(money: money, user: user, place: place);
+    final int requested = jsonArray['requested'];
+    return CreateMoneyResponse(
+        money: money, user: user, place: place, responseRequested: requested);
   }
 
-  Future<CreateMoneyResponse> updateMoney(
+  Future<UpdateMoneyResponse> updateMoney(
       ZaimMoneyType moneyType, int id, MoneyRequestParameter paramsObj) async {
     String moneyTypeString = ZaimMoneyTypeHelper.name(moneyType);
     Map<String, String> params = paramsObj.toRequestBody();
@@ -63,17 +67,21 @@ class ZaimClient {
     } else {
       place = null;
     }
-    return CreateMoneyResponse(money: money, user: user, place: place);
+    final int requested = jsonArray['requested'];
+    return UpdateMoneyResponse(
+        money: money, user: user, place: place, responseRequested: requested);
   }
 
-  Future<MoneyResponse> deleteMoney(ZaimMoneyType moneyType, int id) async {
+  Future<DeleteMoneyResponse> deleteMoney(
+      ZaimMoneyType moneyType, int id) async {
     String moneyTypeString = ZaimMoneyTypeHelper.name(moneyType);
     final response = await _client
         .delete('$ZAIM_API_BASE_URL/v2/home/money/$moneyTypeString/$id');
     var jsonArray = jsonDecode(response.body);
     var money = ZaimMoney(jsonArray['money']);
     var user = ZaimUser(jsonArray['user']);
-    return MoneyResponse(money: money, user: user);
+    final int requested = jsonArray['requested'];
+    return DeleteMoneyResponse(money, user, requested);
   }
 
   Future<List<ZaimCategory>> getCategories() async {
@@ -134,13 +142,14 @@ class ZaimClient {
     return accountsList;
   }
 
-  Future<List<ZaimCurrency>> getCurrencies() async {
+  Future<CurrenciesResponse> getCurrencies() async {
     List<ZaimCurrency> currenciesList = [];
     var response = await _requestParse('/v2/currency');
     for (var data in response['currencies']) {
       currenciesList.add(ZaimCurrency(data));
     }
-    return currenciesList;
+    final int requested = response['requested'];
+    return CurrenciesResponse(currenciesList, requested);
   }
 
   Future<Map<String, dynamic>> _requestParse(String apiPath) async {
