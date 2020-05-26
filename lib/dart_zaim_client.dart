@@ -9,6 +9,7 @@ part 'src/zaim_config.dart';
 part 'src/entities/zaim_account.dart';
 part 'src/entities/zaim_category.dart';
 part 'src/entities/zaim_currency.dart';
+part 'src/entities/zaim_error.dart';
 part 'src/entities/zaim_genre.dart';
 part 'src/entities/zaim_money.dart';
 part 'src/entities/zaim_place.dart';

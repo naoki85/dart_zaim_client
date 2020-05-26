@@ -1,3 +1,8 @@
+## [0.1.0] - 2020-05-26
+
+* Fix accounts, categories and genres response.
+* Create an error class.
+
 ## [0.0.3] - 2020-05-26
 
 * Created each response classes.

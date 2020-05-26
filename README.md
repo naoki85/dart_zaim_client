@@ -133,3 +133,19 @@ getAccounts() => Future<AccountsResponse>
 ```
 getCurrencies() => Future<CurrenciesResponse> 
 ```
+
+### Error class
+
+```
+ZaimError(int status, String message) 
+```
+For example:
+
+```dart
+try {
+    final money = await client.getMoneyList();
+} on ZaimError catch (e) {
+    print(e.status);
+    print(e.message);
+}
+```

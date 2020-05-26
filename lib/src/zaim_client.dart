@@ -21,12 +21,11 @@ class ZaimClient {
 
   Future<MoneyListResponse> getMoneyList() async {
     List<ZaimMoney> moneyList = [];
-    final response = await _client.get('$ZAIM_API_BASE_URL/v2/home/money');
-    var jsonArray = jsonDecode(response.body);
-    for (var data in jsonArray['money']) {
+    final response = await _requestParse('/v2/home/money');
+    for (var data in response['money']) {
       moneyList.add(ZaimMoney(data));
     }
-    final int requested = jsonArray['requested'];
+    final int requested = response['requested'];
     return MoneyListResponse(moneyList, requested);
   }
 
@@ -38,6 +37,10 @@ class ZaimClient {
         '$ZAIM_API_BASE_URL/v2/home/money/$moneyTypeString',
         body: params);
     var jsonArray = jsonDecode(response.body);
+    if (jsonArray['error'] == true) {
+      throw new ZaimError(response.statusCode, jsonArray['message']);
+    }
+
     var money = ZaimMoney(jsonArray['money']);
     var user = ZaimUser(jsonArray['user']);
     ZaimPlace place;
@@ -59,6 +62,10 @@ class ZaimClient {
         '$ZAIM_API_BASE_URL/v2/home/money/$moneyTypeString/$id',
         body: params);
     var jsonArray = jsonDecode(response.body);
+    if (jsonArray['error'] == true) {
+      throw new ZaimError(response.statusCode, jsonArray['message']);
+    }
+
     var money = ZaimMoney(jsonArray['money']);
     var user = ZaimUser(jsonArray['user']);
     ZaimPlace place;
@@ -78,68 +85,73 @@ class ZaimClient {
     final response = await _client
         .delete('$ZAIM_API_BASE_URL/v2/home/money/$moneyTypeString/$id');
     var jsonArray = jsonDecode(response.body);
+    if (jsonArray['error'] == true) {
+      throw new ZaimError(response.statusCode, jsonArray['message']);
+    }
     var money = ZaimMoney(jsonArray['money']);
     var user = ZaimUser(jsonArray['user']);
     final int requested = jsonArray['requested'];
     return DeleteMoneyResponse(money, user, requested);
   }
 
-  Future<List<ZaimCategory>> getCategories() async {
+  Future<CategoriesResponse> getCategories() async {
     List<ZaimCategory> categoriesList = [];
-    final response = await _client.get('$ZAIM_API_BASE_URL/v2/home/category');
-    var jsonArray = jsonDecode(response.body);
-    for (var data in jsonArray['categories']) {
+    var response = await _requestParse('/v2/home/category');
+    for (var data in response['categories']) {
       categoriesList.add(ZaimCategory(data));
     }
-    return categoriesList;
+    final int requested = response['requested'];
+    return CategoriesResponse(categoriesList, requested);
   }
 
-  Future<List<ZaimCategory>> getDefaultCategories() async {
+  Future<CategoriesResponse> getDefaultCategories() async {
     List<ZaimCategory> categoriesList = [];
-    final response = await _client.get('$ZAIM_API_BASE_URL/v2/category');
-    var jsonArray = jsonDecode(response.body);
-    for (var data in jsonArray['categories']) {
+    var response = await _requestParse('/v2/category');
+    for (var data in response['categories']) {
       categoriesList.add(ZaimCategory(data));
     }
-    return categoriesList;
+    final int requested = response['requested'];
+    return CategoriesResponse(categoriesList, requested);
   }
 
-  Future<List<ZaimGenre>> getGenres() async {
+  Future<GenresResponse> getGenres() async {
     List<ZaimGenre> genresList = [];
-    final response = await _client.get('$ZAIM_API_BASE_URL/v2/home/genre');
-    var jsonArray = jsonDecode(response.body);
-    for (var data in jsonArray['genres']) {
+    var response = await _requestParse('/v2/home/genre');
+    for (var data in response['genres']) {
       genresList.add(ZaimGenre(data));
     }
-    return genresList;
+    final int requested = response['requested'];
+    return GenresResponse(genresList, requested);
   }
 
-  Future<List<ZaimGenre>> getDefaultGenres() async {
+  Future<GenresResponse> getDefaultGenres() async {
     List<ZaimGenre> genresList = [];
-    final response = await _client.get('$ZAIM_API_BASE_URL/v2/genre');
-    var jsonArray = jsonDecode(response.body);
-    for (var data in jsonArray['genres']) {
+    var response = await _requestParse('/v2/genre');
+    for (var data in response['genres']) {
       genresList.add(ZaimGenre(data));
     }
-    return genresList;
+    final int requested = response['requested'];
+    return GenresResponse(genresList, requested);
   }
 
-  Future<List<ZaimAccount>> getAccounts() async {
+  Future<AccountsResponse> getAccounts() async {
     List<ZaimAccount> accountsList = [];
     var response = await _requestParse('/v2/home/account');
     for (var data in response['accounts']) {
       accountsList.add(ZaimAccount(data));
     }
-    return accountsList;
+    final int requested = response['requested'];
+    return AccountsResponse(accountsList, requested);
   }
 
-  Future<List<ZaimAccount>> getDefaultAccounts() async {
+  Future<AccountsResponse> getDefaultAccounts() async {
     List<ZaimAccount> accountsList = [];
     var response = await _requestParse('/v2/account');
     for (var data in response['accounts']) {
       accountsList.add(ZaimAccount(data));
     }
-    return accountsList;
+    final int requested = response['requested'];
+    return AccountsResponse(accountsList, requested);
   }
 
   Future<CurrenciesResponse> getCurrencies() async {
@@ -154,6 +166,10 @@ class ZaimClient {
 
   Future<Map<String, dynamic>> _requestParse(String apiPath) async {
     final response = await _client.get('$ZAIM_API_BASE_URL$apiPath');
+    var body = jsonDecode(response.body);
+    if (body['error'] == true) {
+      throw new ZaimError(response.statusCode, body['message']);
+    }
     return jsonDecode(response.body);
   }
 }
